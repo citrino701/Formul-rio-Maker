@@ -45,8 +45,20 @@ function doPost(e) {
   const fn = ACTIONS[body.action];
   if (!fn) return json_({ ok: false, error: "Ação desconhecida: " + body.action });
 
+  // Leitura não precisa de trava (senão as consultas fazem fila e travam tudo).
+  if (READ_ONLY[body.action]) {
+    try {
+      return json_({ ok: true, data: fn(body) });
+    } catch (err) {
+      return json_({ ok: false, error: String((err && err.message) || err) });
+    }
+  }
+
+  // Escrita: uma por vez. Se estiver ocupado por mais de 10s, desiste e o app tenta de novo.
   const lock = LockService.getScriptLock();
-  lock.waitLock(30000);
+  if (!lock.tryLock(10000)) {
+    return json_({ ok: false, busy: true, error: "Planilha ocupada, tente de novo em instantes." });
+  }
   try {
     return json_({ ok: true, data: fn(body) });
   } catch (err) {
@@ -55,6 +67,8 @@ function doPost(e) {
     lock.releaseLock();
   }
 }
+
+const READ_ONLY = { ping: true, listForms: true, getForm: true, listSubmissions: true, listClicks: true, getConfig: true };
 
 const ACTIONS = {
   ping: function () { return { pong: true }; },

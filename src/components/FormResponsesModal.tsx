@@ -96,7 +96,7 @@ export const FormResponsesModal: React.FC<FormResponsesModalProps> = ({
     if (isOpen) {
       fetchResponses();
       // Auto-poll responses every 12 seconds while modal is open
-      const interval = setInterval(fetchResponses, 12000);
+      const interval = setInterval(() => { if (!document.hidden) fetchResponses(); }, 30000);
       return () => clearInterval(interval);
     }
   }, [isOpen, selectedFormId]);

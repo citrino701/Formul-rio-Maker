@@ -171,7 +171,7 @@ export default function App() {
     refreshFormsList();
 
     // Background unattended synchronization every 15s to capture incoming external responses
-    const interval = setInterval(refreshFormsList, 15000);
+    const interval = setInterval(() => { if (!document.hidden) refreshFormsList(); }, 60000);
 
     // Sync immediately when user returns to tab after hours
     const onFocus = () => refreshFormsList();

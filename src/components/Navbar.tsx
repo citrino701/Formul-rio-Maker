@@ -87,7 +87,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       }
     };
     checkEmailStatus();
-    const interval = setInterval(checkEmailStatus, 20000);
+    const interval = setInterval(() => { if (!document.hidden) checkEmailStatus(); }, 120000);
     return () => clearInterval(interval);
   }, []);
 

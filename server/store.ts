@@ -38,16 +38,34 @@ class SheetsStore implements Store {
   kind = "sheets" as const;
   constructor(private url: string, private secret: string) {}
 
+  // Cache curto das leituras: a tela consulta a cada poucos segundos e cada
+  // ida ao Google leva 1-2s. Qualquer escrita limpa o cache.
+  private cache = new Map<string, { at: number; value: any }>();
+  private static CACHE_MS = 8000;
+  private static READS = new Set(["listForms", "getForm", "listSubmissions", "listClicks", "getConfig"]);
+
   private async call<T>(action: string, payload: Record<string, any> = {}): Promise<T> {
+    const isRead = SheetsStore.READS.has(action);
+    const key = isRead ? action + JSON.stringify(payload) : "";
+    if (isRead) {
+      const hit = this.cache.get(key);
+      if (hit && Date.now() - hit.at < SheetsStore.CACHE_MS) return hit.value as T;
+    } else {
+      this.cache.clear();
+    }
+
     let lastErr: any;
-    // 3 tentativas: o Apps Script às vezes demora para "acordar"
-    for (let attempt = 1; attempt <= 3; attempt++) {
+    // Até 2 tentativas, cada uma com no máximo 25s (a Vercel corta em 60s).
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 25_000);
       try {
         const res = await fetch(this.url, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({ secret: this.secret, action, ...payload }),
-          redirect: "follow"
+          redirect: "follow",
+          signal: ctrl.signal
         });
         const text = await res.text();
         let data: any;
@@ -58,13 +76,20 @@ class SheetsStore implements Store {
             `Planilha respondeu algo inesperado (HTTP ${res.status}). Confira se o App da Web está com acesso "Qualquer pessoa". Início da resposta: ${text.slice(0, 120)}`
           );
         }
-        if (!data.ok) throw new Error(`Planilha: ${data.error}`);
+        if (!data.ok) {
+          const e: any = new Error(`Planilha: ${data.error}`);
+          e.busy = Boolean(data.busy);
+          throw e;
+        }
+        if (isRead) this.cache.set(key, { at: Date.now(), value: data.data });
         return data.data as T;
       } catch (err: any) {
-        lastErr = err;
-        // erro de senha / ação não adianta repetir
-        if (String(err?.message || "").startsWith("Planilha:")) break;
-        if (attempt < 3) await new Promise((r) => setTimeout(r, 600 * attempt));
+        lastErr = err?.name === "AbortError" ? new Error("A planilha demorou demais para responder (25s).") : err;
+        const retryable = err?.busy || (!String(err?.message || "").startsWith("Planilha") && err?.name !== "AbortError");
+        if (!retryable || attempt === 2) break;
+        await new Promise((r) => setTimeout(r, 1500));
+      } finally {
+        clearTimeout(timer);
       }
     }
     throw lastErr;
