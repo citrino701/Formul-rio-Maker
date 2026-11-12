@@ -1,0 +1,728 @@
+{
+  "forms": {
+    "form_pre_imersao_btg": {
+      "id": "form_pre_imersao_btg",
+      "title": "Pré-imersão BTG",
+      "subtitle": "Formulário de Contexto Inicial",
+      "themeColor": "#4f46e5",
+      "displayMode": "step-by-step",
+      "logoUrl": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 50' width='160' height='50'%3E%3Crect width='160' height='50' rx='8' fill='%230B1736'/%3E%3Ctext x='20' y='32' fill='%23FFFFFF' font-family='Arial,sans-serif' font-weight='900' font-size='22' letter-spacing='2'%3EBTG%3C/text%3E%3Cpath d='M100 15 L125 15 L125 35 L100 35 Z' fill='none' stroke='%2338BDF8' stroke-width='3'/%3E%3Cpath d='M110 20 L135 20 L135 40 L110 40 Z' fill='%2338BDF8' opacity='0.7'/%3E%3C/svg%3E",
+      "logoPosition": "center",
+      "backgroundImage": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1400&auto=format&fit=crop",
+      "backgroundOverlay": "light",
+      "estimatedTime": "15 a 25 minutos",
+      "openingMessage": "Este formulário é o ponto de partida da construção do seu BTG. Ele nos ajuda a entender como a empresa se enxerga hoje, quais são seus desafios, objetivos e ambições. Iremos cruzar estas informações com a imersão consultiva, materiais existentes, mercado e percepção de marca. Nosso papel é investigar, questionar, organizar e transformar informações dispersas em direção estratégica. Não existe resposta perfeita. Responda a partir do que vocês sabem hoje. Dúvidas, lacunas e incertezas também são dados valiosos.",
+      "closingMessage": "Obrigado por compartilhar este contexto. Após o envio, nossa equipe fará uma leitura inicial dos materiais e respostas para preparar a call de imersão consultiva. O formulário é apenas o início do processo para transformar seus dados em direção estratégica.",
+      "internalGuidelines": [
+        "Fatos e contexto que apenas a empresa consegue fornecer",
+        "Materiais existentes a serem analisados antes da call",
+        "Percepções iniciais e hipóteses do cliente",
+        "Objetivos, restrições e ambições prioritárias",
+        "Quando a empresa estiver em fase de ideia/validação, flexibilizar linguagem de realidade para hipótese",
+        "Manter obrigatórias apenas perguntas estruturais de identificação e agendamento"
+      ],
+      "createdAt": "2026-09-21T10:00:00.000Z",
+      "updatedAt": "2026-09-21T10:00:00.000Z",
+      "sections": [
+        {
+          "id": "sec_1",
+          "title": "01. Contexto essencial",
+          "description": "Estas informações nos ajudam a organizar o processo, conhecer os canais atuais da empresa e alinhar a equipe participante.",
+          "fields": [
+            {
+              "id": "f_1_1",
+              "label": "Qual é o nome da empresa ou marca?",
+              "type": "text",
+              "required": true,
+              "placeholder": "Ex: Koyo Creative ou Nome Fantasia"
+            },
+            {
+              "id": "f_1_2",
+              "label": "Qual é a razão social, caso seja diferente da marca?",
+              "type": "text",
+              "required": false,
+              "placeholder": "Razão social registrada (se houver)"
+            },
+            {
+              "id": "f_1_3",
+              "label": "Qual é o CNPJ da empresa?",
+              "type": "text",
+              "required": false,
+              "placeholder": "00.000.000/0000-00",
+              "helpText": "Manter opcional para negócios em ideia ou validação."
+            },
+            {
+              "id": "f_1_4",
+              "label": "Em que cidade e estado a empresa está sediada?",
+              "type": "text",
+              "required": true,
+              "placeholder": "Ex: São Paulo, SP"
+            },
+            {
+              "id": "f_1_5",
+              "label": "Qual é o site da empresa?",
+              "type": "text",
+              "required": false,
+              "placeholder": "https://suaempresa.com.br",
+              "helpText": "Informe a URL principal, se já estiver no ar."
+            },
+            {
+              "id": "f_1_6",
+              "label": "Quais são os canais digitais da empresa?",
+              "type": "textarea",
+              "required": true,
+              "placeholder": "Instagram: @...\nLinkedIn: linkedin.com/company/...\nOutros canais...",
+              "helpText": "Inclua links de redes sociais, LinkedIn, portfólio, marketplace ou outros canais relevantes. Insira os links separados por linha."
+            },
+            {
+              "id": "f_1_7",
+              "label": "Qual é o seu nome completo?",
+              "type": "text",
+              "required": true,
+              "placeholder": "Nome e sobrenome"
+            },
+            {
+              "id": "f_1_8",
+              "label": "Qual é sua função dentro da empresa?",
+              "type": "text",
+              "required": true,
+              "placeholder": "Ex: Fundador, CMO, Diretor de Produto"
+            },
+            {
+              "id": "f_1_9",
+              "label": "Qual é seu e-mail principal?",
+              "type": "email",
+              "required": true,
+              "placeholder": "seuemail@empresa.com.br",
+              "helpText": "E-mail para envio de confirmações e convocação da call."
+            },
+            {
+              "id": "f_1_10",
+              "label": "Qual é seu WhatsApp ou telefone de contato?",
+              "type": "phone",
+              "required": true,
+              "placeholder": "(11) 90000-0000"
+            },
+            {
+              "id": "f_1_11",
+              "label": "Quem participará da call de imersão?",
+              "type": "textarea",
+              "required": true,
+              "placeholder": "1. Nome Completo - Cargo\n2. Nome Completo - Cargo",
+              "helpText": "Informe o nome e função das pessoas da sua equipe que estarão presentes."
+            },
+            {
+              "id": "f_1_12",
+              "label": "Em que estágio a empresa está hoje?",
+              "type": "radio",
+              "required": true,
+              "helpText": "Selecione o momento mais próximo da realidade atual.",
+              "options": [
+                "Ideia ou pré-operação",
+                "Validação",
+                "Operação inicial",
+                "Crescimento",
+                "Expansão",
+                "Reposicionamento",
+                "Outro"
+              ]
+            },
+            {
+              "id": "f_1_13",
+              "label": "Quais materiais vocês já possuem?",
+              "type": "checkbox",
+              "required": true,
+              "helpText": "Marque todos os materiais que já existem e podem ser consultados.",
+              "options": [
+                "Logo",
+                "Identidade visual",
+                "Site",
+                "Apresentação institucional",
+                "Pitch deck",
+                "Proposta comercial",
+                "Portfólio",
+                "Fotos",
+                "Vídeos",
+                "Depoimentos",
+                "Cases",
+                "Nenhum material relevante no momento",
+                "Outro"
+              ]
+            },
+            {
+              "id": "f_1_14",
+              "label": "Envie links ou arquivos dos materiais que considera importantes para entendermos a empresa.",
+              "type": "file",
+              "required": false,
+              "placeholder": "Cole link do Google Drive, Dropbox, Notion ou WeTransfer...",
+              "helpText": "Aceita links de pastas compartilhadas ou arquivos como PDF, PPT, DOCX, imagens e vídeos."
+            }
+          ]
+        },
+        {
+          "id": "sec_2",
+          "title": "02. O negócio na visão de vocês",
+          "description": "Não buscamos uma definição pronta de estratégia. Queremos entender como vocês explicam e entregam a solução hoje.",
+          "fields": [
+            {
+              "id": "f_2_1",
+              "label": "Como você explicaria a empresa para alguém que nunca ouviu falar dela?",
+              "type": "textarea",
+              "required": true,
+              "helpText": "Trata-se de percepção inicial, não de posicionamento final.",
+              "placeholder": "Explique de forma simples, como em uma conversa informal..."
+            },
+            {
+              "id": "f_2_2",
+              "label": "O que a empresa oferece hoje? Liste produtos, serviços ou soluções existentes.",
+              "type": "textarea",
+              "required": true,
+              "helpText": "Para negócios em ideia: usar 'O que a empresa pretende oferecer?'.",
+              "placeholder": "Liste os principais produtos ou serviços oferecidos..."
+            },
+            {
+              "id": "f_2_3",
+              "label": "Na percepção de vocês, qual problema principal a empresa ajuda a resolver?",
+              "type": "textarea",
+              "required": true,
+              "helpText": "Usar 'na percepção de vocês' para não exigir diagnóstico pronto."
+            },
+            {
+              "id": "f_2_4",
+              "label": "O que vocês acreditam que muda para o cliente depois de contratar ou usar a solução?",
+              "type": "textarea",
+              "required": true,
+              "placeholder": "Qual transformação ou benefício prático é gerado?"
+            },
+            {
+              "id": "f_2_5",
+              "label": "Como a empresa gera receita hoje, ou como pretende gerar?",
+              "type": "textarea",
+              "required": true,
+              "helpText": "Ex.: projeto, assinatura, venda avulsa, comissão, licenciamento ou outro modelo."
+            },
+            {
+              "id": "f_2_6",
+              "label": "Em que formato a empresa entrega valor?",
+              "type": "checkbox",
+              "required": true,
+              "options": [
+                "Serviço pontual",
+                "Projeto personalizado",
+                "Consultoria",
+                "Produto físico",
+                "Produto digital",
+                "Plataforma ou software",
+                "Assinatura recorrente",
+                "Curso ou treinamento",
+                "Comunidade",
+                "Outro"
+              ]
+            },
+            {
+              "id": "f_2_7",
+              "label": "Há algo que a empresa não entrega, não faz ou não deseja fazer?",
+              "type": "textarea",
+              "required": false,
+              "helpText": "Importante para limites de oferta e delimitação de escopo."
+            },
+            {
+              "id": "f_2_8",
+              "label": "Quais são os principais objetivos da empresa nos próximos 12 meses?",
+              "type": "textarea",
+              "required": true,
+              "helpText": "Liste até três objetivos principais mais importantes."
+            },
+            {
+              "id": "f_2_9",
+              "label": "Existe alguma mudança importante prevista?",
+              "type": "checkbox",
+              "required": false,
+              "options": [
+                "Novo produto ou serviço",
+                "Novo público",
+                "Expansão geográfica",
+                "Mudança de marca ou posicionamento",
+                "Entrada em novo canal de vendas",
+                "Busca de investimento, edital ou captação",
+                "Nova parceria estratégica",
+                "Nenhuma mudança relevante no momento",
+                "Outro"
+              ]
+            },
+            {
+              "id": "f_2_10",
+              "label": "Existe alguma limitação, desafio ou restrição que devemos considerar?",
+              "type": "textarea",
+              "required": false,
+              "helpText": "Pode envolver equipe, prazo, orçamento, operação ou mercado."
+            }
+          ]
+        },
+        {
+          "id": "sec_3",
+          "title": "03. Público, mercado e referências",
+          "description": "Esta seção reúne a percepção atual de vocês sobre clientes, mercado e alternativas.",
+          "fields": [
+            {
+              "id": "f_3_1",
+              "label": "Quem compra, usa ou se beneficia da solução hoje?",
+              "type": "textarea",
+              "required": true,
+              "helpText": "Para negócios em ideia: 'Quem vocês acreditam que usará ou se beneficiará da solução?'."
+            },
+            {
+              "id": "f_3_2",
+              "label": "Quem costuma tomar a decisão de contratação ou compra?",
+              "type": "textarea",
+              "required": false,
+              "placeholder": "Ex: O próprio usuário, Diretor financeiro, Gerente de RH, etc."
+            },
+            {
+              "id": "f_3_3",
+              "label": "Em que situação uma pessoa ou empresa costuma procurar vocês?",
+              "type": "textarea",
+              "required": true,
+              "helpText": "Pergunta de contexto e gatilho de compra."
+            },
+            {
+              "id": "f_3_4",
+              "label": "Quais problemas, dificuldades ou desejos vocês percebem com mais frequência nesse público?",
+              "type": "textarea",
+              "required": true
+            },
+            {
+              "id": "f_3_5",
+              "label": "Na percepção de vocês, o que faz alguém escolher a empresa hoje?",
+              "type": "textarea",
+              "required": false,
+              "helpText": "Percepção livre; nossa equipe irá validar e aprofundar na imersão."
+            },
+            {
+              "id": "f_3_6",
+              "label": "Quais dúvidas ou objeções aparecem antes da compra?",
+              "type": "textarea",
+              "required": false
+            },
+            {
+              "id": "f_3_7",
+              "label": "Que tipo de cliente, demanda ou relação comercial não combina com a empresa?",
+              "type": "textarea",
+              "required": false
+            },
+            {
+              "id": "f_3_8",
+              "label": "Como clientes ou potenciais clientes conhecem a empresa atualmente?",
+              "type": "checkbox",
+              "required": true,
+              "options": [
+                "Indicação",
+                "Instagram",
+                "LinkedIn",
+                "Google",
+                "Eventos",
+                "WhatsApp",
+                "Parceiros",
+                "Anúncios",
+                "Prospecção ativa",
+                "Marketplace",
+                "Outro"
+              ]
+            },
+            {
+              "id": "f_3_9",
+              "label": "Quais empresas, marcas ou soluções vocês enxergam como referência, concorrência ou alternativa para o cliente?",
+              "type": "textarea",
+              "required": false,
+              "helpText": "A lista é ponto de partida; a análise de categoria será feita posteriormente."
+            },
+            {
+              "id": "f_3_10",
+              "label": "Há algum mercado, setor, região ou tipo de cliente que vocês gostariam de alcançar no futuro?",
+              "type": "textarea",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "sec_4",
+          "title": "04. Marca e comunicação atual",
+          "description": "Não é necessário definir posicionamento, tom de voz ou identidade visual de forma técnica. Queremos impressões e aspirações sinceras.",
+          "fields": [
+            {
+              "id": "f_4_1",
+              "label": "Como vocês gostariam que a empresa fosse percebida por clientes, parceiros e mercado?",
+              "type": "textarea",
+              "required": true,
+              "helpText": "Percepção desejada, não resposta definitiva."
+            },
+            {
+              "id": "f_4_2",
+              "label": "Quais palavras, características ou sensações vocês acreditam que combinam com a empresa?",
+              "type": "textarea",
+              "required": false
+            },
+            {
+              "id": "f_4_3",
+              "label": "Existe algo que vocês não querem que a empresa pareça, comunique ou prometa?",
+              "type": "textarea",
+              "required": true
+            },
+            {
+              "id": "f_4_4",
+              "label": "Há alguma percepção atual que vocês gostariam de mudar?",
+              "type": "textarea",
+              "required": false
+            },
+            {
+              "id": "f_4_5",
+              "label": "Quais materiais, posts, apresentações ou mensagens representam bem a empresa hoje?",
+              "type": "textarea",
+              "required": false,
+              "helpText": "Inclua links, se possível."
+            },
+            {
+              "id": "f_4_6",
+              "label": "Quais materiais, posts, apresentações ou mensagens não representam bem a empresa?",
+              "type": "textarea",
+              "required": false
+            },
+            {
+              "id": "f_4_7",
+              "label": "Quais marcas, empresas, referências visuais ou estilos de comunicação vocês admiram? Por quê?",
+              "type": "textarea",
+              "required": false
+            },
+            {
+              "id": "f_4_8",
+              "label": "Existe alguma marca, estilo visual ou forma de comunicação que vocês não gostam ou não querem repetir?",
+              "type": "textarea",
+              "required": false
+            },
+            {
+              "id": "f_4_9",
+              "label": "Existe alguma palavra, expressão ou promessa que vocês preferem evitar?",
+              "type": "textarea",
+              "required": false
+            },
+            {
+              "id": "f_4_10",
+              "label": "Se a empresa fosse uma pessoa, como ela se comportaria em uma conversa?",
+              "type": "textarea",
+              "required": false,
+              "helpText": "Pergunta de apoio para calibrar personalidade e tom de voz."
+            }
+          ]
+        },
+        {
+          "id": "sec_5",
+          "title": "05. Objetivos da imersão",
+          "description": "Este bloco nos ajuda a entender o que precisa ficar mais claro ao final do processo estratégico.",
+          "fields": [
+            {
+              "id": "f_5_1",
+              "label": "Qual é a principal dúvida, desafio ou decisão que vocês esperam esclarecer com o BTG?",
+              "type": "textarea",
+              "required": true
+            },
+            {
+              "id": "f_5_2",
+              "label": "O que vocês gostariam que estivesse mais claro sobre a empresa ao final deste processo?",
+              "type": "textarea",
+              "required": true
+            },
+            {
+              "id": "f_5_3",
+              "label": "Existe alguma apresentação, reunião, lançamento, edital, evento, captação ou marco importante próximo?",
+              "type": "textarea",
+              "required": false,
+              "helpText": "Essa informação pode orientar prioridades de cronograma."
+            },
+            {
+              "id": "f_5_4",
+              "label": "Existe alguma informação estratégica ou confidencial que devemos tratar com cuidado?",
+              "type": "textarea",
+              "required": false
+            },
+            {
+              "id": "f_5_5",
+              "label": "Há algo importante sobre a empresa que não foi perguntado até aqui?",
+              "type": "textarea",
+              "required": false,
+              "helpText": "Campo livre final para qualquer contexto adicional."
+            }
+          ]
+        },
+        {
+          "id": "sec_6",
+          "title": "06. Confidencialidade e próximos passos",
+          "description": "As informações compartilhadas serão utilizadas exclusivamente para a construção do BTG e tratadas com sigilo.",
+          "fields": [
+            {
+              "id": "f_6_1",
+              "label": "Autorizo a equipe estratégica a utilizar as informações e materiais compartilhados neste formulário exclusivamente para o projeto.",
+              "type": "consent",
+              "required": true,
+              "options": [
+                "Li e estou de acordo."
+              ]
+            },
+            {
+              "id": "f_6_2",
+              "label": "Autorizo a gravação e a transcrição da call de imersão exclusivamente para garantir o registro e precisão das análises estratégicas.",
+              "type": "consent",
+              "required": true,
+              "options": [
+                "Li e estou de acordo."
+              ]
+            }
+          ]
+        }
+      ],
+      "taggedLinks": [
+        {
+          "id": "link_tag_1",
+          "name": "Link tagueado 1",
+          "createdAt": "2026-09-28T19:50:18.407Z",
+          "clicksCount": 1,
+          "completedCount": 1
+        },
+        {
+          "id": "link_tag_2",
+          "name": "Link tagueado 2",
+          "createdAt": "2026-09-28T19:50:20.677Z",
+          "clicksCount": 1,
+          "completedCount": 0
+        }
+      ]
+    },
+    "form_1790000150594": {
+      "id": "form_1790000150594",
+      "title": "Formulário Teste",
+      "subtitle": "Preencha as informações solicitadas",
+      "estimatedTime": "5 a 10 minutos",
+      "openingMessage": "Por favor, responda com atenção às perguntas a seguir.",
+      "closingMessage": "Agradecemos pela colaboração! Suas respostas foram recebidas com sucesso.",
+      "sections": [
+        {
+          "id": "sec_1790000150594",
+          "title": "01. Identificação Geral",
+          "description": "Dados básicos para início do contato.",
+          "fields": [
+            {
+              "id": "f_1790000150594_1",
+              "label": "Nome Completo",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "f_1790000150594_2",
+              "label": "E-mail Principal",
+              "type": "email",
+              "required": true
+            },
+            {
+              "id": "f_1790000150594_3",
+              "label": "WhatsApp de Contato",
+              "type": "phone",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "sec_1790000421592",
+          "title": "Perguntas",
+          "description": "Descrição dos objetivos deste bloco de perguntas.",
+          "fields": [
+            {
+              "id": "field_1790000469585_fx42i",
+              "label": "Qual sua cor favorita?",
+              "type": "radio",
+              "required": false,
+              "options": [
+                "Azul",
+                "Vermelho",
+                "Laranja",
+                "rosa"
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-09-21T14:15:50.594Z",
+      "updatedAt": "2026-09-21T14:21:09.707Z"
+    }
+  },
+  "submissions": {
+    "form_pre_imersao_btg": [
+      {
+        "id": "sub_1790625034052_vopk",
+        "formId": "form_pre_imersao_btg",
+        "formTitle": "Pré-imersão BTG",
+        "submittedAt": "2026-09-28T19:50:34.053Z",
+        "answers": {
+          "f_nome_completo": "Carlos Alberto",
+          "f_email_comercial": "carlos@empresa.com"
+        },
+        "respondentName": "Carlos Alberto",
+        "respondentEmail": "carlos@empresa.com",
+        "autoReply": {
+          "sentAt": "2026-09-28T19:50:34.053Z",
+          "recipientEmail": "carlos@empresa.com",
+          "recipientName": "Carlos Alberto",
+          "adminForwardEmail": "hugoviajante@gmail.com",
+          "adminForwardSent": true,
+          "subject": "Confirmação de recebimento: Pré-imersão BTG",
+          "bodyHtml": "\n      <!DOCTYPE html>\n      <html lang=\"pt-BR\">\n      <head>\n        <meta charset=\"utf-8\">\n        <style>\n          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 24px; color: #0f172a; }\n          .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }\n          .header { background: linear-gradient(135deg, #4338ca 0%, #1e1b4b 100%); color: #ffffff; padding: 28px 24px; text-align: center; }\n          .badge { display: inline-block; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }\n          .title { font-size: 22px; font-weight: 800; margin: 0; }\n          .subtitle { font-size: 13px; opacity: 0.9; margin: 6px 0 0 0; }\n          .content { padding: 28px 24px; }\n          .greeting { font-size: 14px; line-height: 1.6; color: #334155; margin-bottom: 20px; background-color: #f8fafc; border-left: 4px solid #6366f1; padding: 14px 16px; border-radius: 4px 8px 8px 4px; }\n          .meta-box { background: #e0e7ff; border: 1px solid #c7d2fe; border-radius: 10px; padding: 12px 16px; font-size: 12px; color: #312e81; margin-bottom: 24px; }\n          .table-title { font-size: 13px; font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 0.05em; margin-bottom: 10px; }\n          .answers-table { width: 100%; border-collapse: collapse; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }\n          .footer { background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px; text-align: center; font-size: 11px; color: #64748b; }\n        </style>\n      </head>\n      <body>\n        <div class=\"container\">\n          <div class=\"header\">\n            <div class=\"badge\">Comprovante de Envio</div>\n            <h1 class=\"title\">Pré-imersão BTG</h1>\n            <p class=\"subtitle\">Resposta automática gerada pelo sistema</p>\n          </div>\n          <div class=\"content\">\n            <div class=\"greeting\">\n              Olá, Carlos Alberto! Confirmamos o recebimento das suas respostas para o formulário \"Pré-imersão BTG\". Abaixo você encontra o resumo das informações enviadas para sua conferência e protocolo de atendimento.\n            </div>\n\n            <div class=\"meta-box\">\n              <div style=\"margin-bottom: 4px;\"><strong>Protocolo:</strong> sub_1790625034052_vopk</div>\n              <div><strong>Data de Envio:</strong> 28/09/2026, 19:50:34</div>\n            </div>\n\n            \n\n            <p style=\"font-size: 12px; color: #64748b; margin-top: 16px; line-height: 1.5;\">\n              Caso precise retificar alguma informação ou tenha dúvidas, favor entrar em contato com o organizador deste formulário informando o seu protocolo.\n            </p>\n          </div>\n          <div class=\"footer\">\n            <p style=\"margin: 0;\">Este é um e-mail de confirmação automático enviado para <strong>carlos@empresa.com</strong>.</p>\n            <p style=\"margin: 4px 0 0 0;\">Pré-imersão BTG • Todos os direitos reservados</p>\n          </div>\n        </div>\n      </body>\n      </html>\n    ",
+          "bodyText": "Confirmação de recebimento: Pré-imersão BTG\n\nOlá, Carlos Alberto! Confirmamos o recebimento das suas respostas para o formulário \"Pré-imersão BTG\". Abaixo você encontra o resumo das informações enviad",
+          "status": "simulated"
+        },
+        "tagId": "link_tag_1",
+        "tagName": "Link tagueado 1"
+      }
+    ],
+    "form_1790000150594": [
+      {
+        "id": "sub_1790000594008_4jcm",
+        "formId": "form_1790000150594",
+        "submittedAt": "2026-09-21T14:23:14.008Z",
+        "answers": {
+          "f_1790000150594_1": "Hugo Gomes Pinheiro",
+          "f_1790000150594_2": "hugoviajante@gmail.com",
+          "f_1790000150594_3": "24998688368",
+          "field_1790000469585_fx42i": "Azul"
+        },
+        "respondentName": "Hugo Gomes Pinheiro",
+        "respondentEmail": "hugoviajante@gmail.com",
+        "autoReply": {
+          "sentAt": "2026-09-23T14:14:57.007Z",
+          "recipientEmail": "hugoviajante@gmail.com",
+          "recipientName": "Hugo Gomes Pinheiro",
+          "adminForwardEmail": "hugoviajante@gmail.com",
+          "adminForwardSent": true,
+          "subject": "Confirmação de recebimento: Formulário Teste",
+          "status": "simulated",
+          "bodyText": "Confirmação de recebimento: Formulário Teste\n\nOlá, Hugo Gomes Pinheiro! Confirmamos o recebimento das suas respostas para o formulário \"Formulário Teste\". Abaixo você encontra o resumo das informações"
+        }
+      },
+      {
+        "id": "sub_1790174015713_6nnb",
+        "formId": "form_1790000150594",
+        "formTitle": "Formulário Teste",
+        "submittedAt": "2026-09-23T14:33:35.713Z",
+        "answers": {
+          "fld_test1": "Valor 1",
+          "fld_test2": "Valor 2"
+        },
+        "respondentName": "Cliente Teste",
+        "respondentEmail": "respondente@teste.com",
+        "autoReply": {
+          "sentAt": "2026-09-23T14:33:35.713Z",
+          "recipientEmail": "respondente@teste.com",
+          "recipientName": "Cliente Teste",
+          "adminForwardEmail": "hugoviajante@gmail.com",
+          "adminForwardSent": true,
+          "subject": "Confirmação de recebimento: Formulário Teste",
+          "bodyHtml": "\n      <!DOCTYPE html>\n      <html lang=\"pt-BR\">\n      <head>\n        <meta charset=\"utf-8\">\n        <style>\n          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 24px; color: #0f172a; }\n          .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }\n          .header { background: linear-gradient(135deg, #4338ca 0%, #1e1b4b 100%); color: #ffffff; padding: 28px 24px; text-align: center; }\n          .badge { display: inline-block; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }\n          .title { font-size: 22px; font-weight: 800; margin: 0; }\n          .subtitle { font-size: 13px; opacity: 0.9; margin: 6px 0 0 0; }\n          .content { padding: 28px 24px; }\n          .greeting { font-size: 14px; line-height: 1.6; color: #334155; margin-bottom: 20px; background-color: #f8fafc; border-left: 4px solid #6366f1; padding: 14px 16px; border-radius: 4px 8px 8px 4px; }\n          .meta-box { background: #e0e7ff; border: 1px solid #c7d2fe; border-radius: 10px; padding: 12px 16px; font-size: 12px; color: #312e81; margin-bottom: 24px; }\n          .table-title { font-size: 13px; font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 0.05em; margin-bottom: 10px; }\n          .answers-table { width: 100%; border-collapse: collapse; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }\n          .footer { background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px; text-align: center; font-size: 11px; color: #64748b; }\n        </style>\n      </head>\n      <body>\n        <div class=\"container\">\n          <div class=\"header\">\n            <div class=\"badge\">Comprovante de Envio</div>\n            <h1 class=\"title\">Formulário Teste</h1>\n            <p class=\"subtitle\">Resposta automática gerada pelo sistema</p>\n          </div>\n          <div class=\"content\">\n            <div class=\"greeting\">\n              Olá, Cliente Teste! Confirmamos o recebimento das suas respostas para o formulário \"Formulário Teste\". Abaixo você encontra o resumo das informações enviadas para sua conferência e protocolo de atendimento.\n            </div>\n\n            <div class=\"meta-box\">\n              <div style=\"margin-bottom: 4px;\"><strong>Protocolo:</strong> sub_1790174015713_6nnb</div>\n              <div><strong>Data de Envio:</strong> 23/09/2026, 14:33:35</div>\n            </div>\n\n            \n\n            <p style=\"font-size: 12px; color: #64748b; margin-top: 16px; line-height: 1.5;\">\n              Caso precise retificar alguma informação ou tenha dúvidas, favor entrar em contato com o organizador deste formulário informando o seu protocolo.\n            </p>\n          </div>\n          <div class=\"footer\">\n            <p style=\"margin: 0;\">Este é um e-mail de confirmação automático enviado para <strong>respondente@teste.com</strong>.</p>\n            <p style=\"margin: 4px 0 0 0;\">Formulário Teste • Todos os direitos reservados</p>\n          </div>\n        </div>\n      </body>\n      </html>\n    ",
+          "bodyText": "Confirmação de recebimento: Formulário Teste\n\nOlá, Cliente Teste! Confirmamos o recebimento das suas respostas para o formulário \"Formulário Teste\". Abaixo você encontra o resumo das informações envia",
+          "status": "simulated"
+        }
+      },
+      {
+        "id": "sub_1790174187828_eaw1",
+        "formId": "form_1790000150594",
+        "formTitle": "Formulário Teste",
+        "submittedAt": "2026-09-23T14:36:27.835Z",
+        "answers": {
+          "f_1790000150594_1": "GABRIEL THE WIZ",
+          "f_1790000150594_2": "machadogabriel98@gmail.com",
+          "f_1790000150594_3": "+55 24 99879-7458",
+          "field_1790000469585_fx42i": "Vermelho"
+        },
+        "respondentName": "GABRIEL THE WIZ",
+        "respondentEmail": "machadogabriel98@gmail.com",
+        "autoReply": {
+          "sentAt": "2026-09-23T14:36:46.741Z",
+          "recipientEmail": "machadogabriel98@gmail.com",
+          "recipientName": "GABRIEL THE WIZ",
+          "adminForwardEmail": "hugoviajante@gmail.com",
+          "adminForwardSent": true,
+          "subject": "Confirmação de recebimento: Formulário Teste",
+          "status": "simulated",
+          "bodyText": "Confirmação de recebimento: Formulário Teste\n\nOlá, GABRIEL THE WIZ! Confirmamos o recebimento das suas respostas para o formulário \"Formulário Teste\". Abaixo você encontra o resumo das informações env"
+        }
+      },
+      {
+        "id": "sub_1790174634021_wcbo",
+        "formId": "form_1790000150594",
+        "formTitle": "Formulário Teste",
+        "submittedAt": "2026-09-23T14:43:54.023Z",
+        "answers": {
+          "fld_test": "Ok"
+        },
+        "respondentName": "Hugo Teste",
+        "respondentEmail": "hugoviajante@gmail.com",
+        "autoReply": {
+          "sentAt": "2026-09-23T14:43:54.023Z",
+          "recipientEmail": "hugoviajante@gmail.com",
+          "recipientName": "Hugo Teste",
+          "adminForwardEmail": "hugoviajante@gmail.com",
+          "adminForwardSent": true,
+          "subject": "Confirmação de recebimento: Formulário Teste",
+          "bodyHtml": "\n      <!DOCTYPE html>\n      <html lang=\"pt-BR\">\n      <head>\n        <meta charset=\"utf-8\">\n        <style>\n          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 24px; color: #0f172a; }\n          .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }\n          .header { background: linear-gradient(135deg, #4338ca 0%, #1e1b4b 100%); color: #ffffff; padding: 28px 24px; text-align: center; }\n          .badge { display: inline-block; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }\n          .title { font-size: 22px; font-weight: 800; margin: 0; }\n          .subtitle { font-size: 13px; opacity: 0.9; margin: 6px 0 0 0; }\n          .content { padding: 28px 24px; }\n          .greeting { font-size: 14px; line-height: 1.6; color: #334155; margin-bottom: 20px; background-color: #f8fafc; border-left: 4px solid #6366f1; padding: 14px 16px; border-radius: 4px 8px 8px 4px; }\n          .meta-box { background: #e0e7ff; border: 1px solid #c7d2fe; border-radius: 10px; padding: 12px 16px; font-size: 12px; color: #312e81; margin-bottom: 24px; }\n          .table-title { font-size: 13px; font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 0.05em; margin-bottom: 10px; }\n          .answers-table { width: 100%; border-collapse: collapse; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }\n          .footer { background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px; text-align: center; font-size: 11px; color: #64748b; }\n        </style>\n      </head>\n      <body>\n        <div class=\"container\">\n          <div class=\"header\">\n            <div class=\"badge\">Comprovante de Envio</div>\n            <h1 class=\"title\">Formulário Teste</h1>\n            <p class=\"subtitle\">Resposta automática gerada pelo sistema</p>\n          </div>\n          <div class=\"content\">\n            <div class=\"greeting\">\n              Olá, Hugo Teste! Confirmamos o recebimento das suas respostas para o formulário \"Formulário Teste\". Abaixo você encontra o resumo das informações enviadas para sua conferência e protocolo de atendimento.\n            </div>\n\n            <div class=\"meta-box\">\n              <div style=\"margin-bottom: 4px;\"><strong>Protocolo:</strong> sub_1790174634021_wcbo</div>\n              <div><strong>Data de Envio:</strong> 23/09/2026, 14:43:54</div>\n            </div>\n\n            \n\n            <p style=\"font-size: 12px; color: #64748b; margin-top: 16px; line-height: 1.5;\">\n              Caso precise retificar alguma informação ou tenha dúvidas, favor entrar em contato com o organizador deste formulário informando o seu protocolo.\n            </p>\n          </div>\n          <div class=\"footer\">\n            <p style=\"margin: 0;\">Este é um e-mail de confirmação automático enviado para <strong>hugoviajante@gmail.com</strong>.</p>\n            <p style=\"margin: 4px 0 0 0;\">Formulário Teste • Todos os direitos reservados</p>\n          </div>\n        </div>\n      </body>\n      </html>\n    ",
+          "bodyText": "Confirmação de recebimento: Formulário Teste\n\nOlá, Hugo Teste! Confirmamos o recebimento das suas respostas para o formulário \"Formulário Teste\". Abaixo você encontra o resumo das informações enviadas",
+          "status": "simulated"
+        }
+      }
+    ]
+  },
+  "taggedLinks": {
+    "form_pre_imersao_btg": [
+      {
+        "id": "link_tag_1",
+        "name": "Link tagueado 1",
+        "createdAt": "2026-09-28T19:50:18.407Z",
+        "clicksCount": 1,
+        "completedCount": 1
+      },
+      {
+        "id": "link_tag_2",
+        "name": "Link tagueado 2",
+        "createdAt": "2026-09-28T19:50:20.677Z",
+        "clicksCount": 1,
+        "completedCount": 0
+      }
+    ]
+  },
+  "linkClicks": {
+    "form_pre_imersao_btg": [
+      {
+        "id": "clk_1790625024210_0n2cv",
+        "formId": "form_pre_imersao_btg",
+        "tagId": "link_tag_1",
+        "tagName": "Link tagueado 1",
+        "dia": "28/09/2026",
+        "horario": "16:50:24",
+        "navegador": "Google Chrome • Windows 10/11",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "ip": "127.0.0.1",
+        "completed": true,
+        "timestamp": "2026-09-28T19:50:24.203Z",
+        "submissionId": "sub_1790625034052_vopk"
+      },
+      {
+        "id": "clk_1790625027155_57ifp",
+        "formId": "form_pre_imersao_btg",
+        "tagId": "link_tag_2",
+        "tagName": "Link tagueado 2",
+        "dia": "28/09/2026",
+        "horario": "16:50:27",
+        "navegador": "Apple Safari • iPhone (iOS)",
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+        "ip": "127.0.0.1",
+        "completed": false,
+        "timestamp": "2026-09-28T19:50:27.154Z"
+      }
+    ]
+  }
+}

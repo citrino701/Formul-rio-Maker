@@ -1,0 +1,6 @@
+{
+  "name": "Gerador de Formulários com IA e PDF",
+  "description": "Crie formulários inteligentes por texto ou envio de documentos, gere links para resposta, colete envios em tempo real e analise em 'Ver respostas do formulário', com campos personalizados e exportação em PDF.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
