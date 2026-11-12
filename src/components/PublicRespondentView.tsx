@@ -266,6 +266,16 @@ export const PublicRespondentView: React.FC<PublicRespondentViewProps> = ({
     return list;
   }, [form, answers, fieldsMap]);
 
+  // (precisa ficar ANTES dos "return" de carregamento/erro: hooks do React
+  // não podem ser pulados, senão a tela fica em branco para quem abre o link)
+  // Calculate overall required fields completion (only visible required fields)
+  const allRequiredFields = useMemo(() => {
+    if (!form) return [];
+    return form.sections
+      .flatMap((s) => s.fields)
+      .filter((f) => f.required && isFieldVisible(f, answers, fieldsMap));
+  }, [form, answers, fieldsMap]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
@@ -305,14 +315,6 @@ export const PublicRespondentView: React.FC<PublicRespondentViewProps> = ({
   const logoPosition = form.logoPosition || "center";
   const bgImage = form.backgroundImage;
   const bgOverlay = form.backgroundOverlay || "light";
-
-  // Calculate overall required fields completion (only visible required fields)
-  const allRequiredFields = useMemo(() => {
-    if (!form) return [];
-    return form.sections
-      .flatMap((s) => s.fields)
-      .filter((f) => f.required && isFieldVisible(f, answers, fieldsMap));
-  }, [form, answers, fieldsMap]);
 
   const isFieldAnswered = (f: FormField) => {
     const val = answers[f.id];
