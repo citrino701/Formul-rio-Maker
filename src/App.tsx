@@ -223,11 +223,15 @@ export default function App() {
   // Sync with server whenever form changes
   const saveFormToServer = useCallback(async (formToSave: FormStructure) => {
     try {
-      await fetch("/api/forms", {
+      const res = await fetch("/api/forms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formToSave)
       });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Falha ao salvar (HTTP ${res.status})`);
+      }
       refreshFormsList();
     } catch (err) {
       console.error("Erro ao salvar formulário no servidor:", err);
@@ -246,6 +250,18 @@ export default function App() {
     onSave: saveFormToServer,
     debounceMs: 2000
   });
+
+  // Avisa antes de fechar a aba se ainda tem alteração não salva
+  useEffect(() => {
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (autoSaveStatus === "pending" || autoSaveStatus === "saving" || autoSaveStatus === "error") {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [autoSaveStatus]);
 
   // Sync with localStorage
   useEffect(() => {
@@ -352,8 +368,25 @@ export default function App() {
     return null;
   };
 
+  // Antes de sair do formulário atual, salva o que ainda estava esperando os 2s do auto-save
+  const flushPendingSave = async () => {
+    if (autoSaveStatus === "pending" || autoSaveStatus === "error") {
+      try {
+        await saveNow();
+      } catch {
+        /* o status de erro já aparece na barra */
+      }
+    }
+  };
+
+  const goHome = async () => {
+    await flushPendingSave();
+    setView("home");
+  };
+
   // Abre um formulário da lista no editor
   const openFormInEditor = async (formId: string) => {
+    await flushPendingSave();
     if (formId !== form.id) {
       const loaded = await handleSelectFormById(formId);
       if (!loaded) {
@@ -366,7 +399,10 @@ export default function App() {
   };
 
   const openResponsesFor = async (formId?: string) => {
-    if (formId && formId !== form.id) await handleSelectFormById(formId);
+    if (formId && formId !== form.id) {
+      await flushPendingSave();
+      await handleSelectFormById(formId);
+    }
     setIsResponsesModalOpen(true);
   };
 
@@ -506,7 +542,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
           <button
             type="button"
-            onClick={() => setView("home")}
+            onClick={goHome}
             className="flex items-center gap-2.5 cursor-pointer"
           >
             <span className="w-8 h-8 rounded-lg bg-[#16181D] text-white flex items-center justify-center font-bold text-sm">F</span>
@@ -515,7 +551,7 @@ export default function App() {
           <nav className="flex items-center gap-1">
             <button
               type="button"
-              onClick={() => setView("home")}
+              onClick={goHome}
               className={`px-3.5 py-2 rounded-lg text-sm cursor-pointer ${view === "home" ? "bg-[#EEF0FB] text-[#2F4AC0] font-semibold" : "text-[#4A4E57] hover:bg-slate-100 font-medium"}`}
             >
               Formulários
@@ -642,7 +678,7 @@ export default function App() {
             <div className="max-w-6xl mx-auto px-4 sm:px-8 py-3 flex flex-wrap items-center gap-3">
               <button
                 type="button"
-                onClick={() => setView("home")}
+                onClick={goHome}
                 className="flex items-center gap-1.5 text-sm font-medium text-[#4A4E57] hover:text-[#16181D] cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -657,6 +693,11 @@ export default function App() {
                   )}
                   {autoSaveStatus === "saved" && (
                     <span className="flex items-center gap-1 text-[#1E7A46]"><Check className="w-3.5 h-3.5" />Salvo{lastSavedAt ? ` às ${lastSavedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : ""}</span>
+                  )}
+                  {autoSaveStatus === "error" && (
+                    <button type="button" onClick={() => saveNow()} className="flex items-center gap-1.5 text-[#B3261E] underline cursor-pointer">
+                      <AlertCircle className="w-3.5 h-3.5" />Não salvou, tentar de novo
+                    </button>
                   )}
                   {autoSaveStatus === "pending" && (
                     <span className="flex items-center gap-1.5 text-[#8A5300]"><span className="w-2 h-2 rounded-full bg-amber-500" />Salvando em instantes</span>

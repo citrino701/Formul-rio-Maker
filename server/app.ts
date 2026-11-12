@@ -436,7 +436,18 @@ function mergeEmailConfig(saved: Partial<ServerEmailConfig> | null): ServerEmail
 
 async function saveEmailConfig(config: ServerEmailConfig) {
   try {
-    await getStore().setConfig("email", config);
+    // Nunca grava na planilha uma senha/chave que já vem das variáveis da Vercel.
+    const toSave: any = { ...config };
+    const secretEnv: Record<string, string[]> = {
+      gmailAppPassword: ["GMAIL_APP_PASSWORD", "GMAIL_PASS"],
+      resendApiKey: ["RESEND_API_KEY"],
+      brevoApiKey: ["BREVO_API_KEY"],
+      smtpPass: ["SMTP_PASS"]
+    };
+    for (const [field, envs] of Object.entries(secretEnv)) {
+      if (envs.some((n) => (process.env[n] || "").trim())) delete toSave[field];
+    }
+    await getStore().setConfig("email", toSave);
     configLoadedAt = Date.now();
   } catch (err) {
     console.error("[EmailConfig] Falha ao salvar configuração:", err);
