@@ -6,3 +6,8 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Banco local e configs com dados de clientes — nunca subir pro GitHub
+data/
+dist-server/
+.vercel
