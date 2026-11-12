@@ -279,7 +279,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
       <div className="bg-white rounded-3xl p-6 border-2 border-slate-300 shadow-xs space-y-4">
         <div className="flex flex-wrap items-center justify-between border-b-2 border-slate-200 pb-3 gap-2">
           <span className="text-xs font-bold text-indigo-700 uppercase tracking-wider">
-            Configurações e Título do Formulário
+            Título e mensagens
           </span>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 text-xs text-slate-600 font-semibold">
@@ -370,6 +370,297 @@ export const FormEditor: React.FC<FormEditorProps> = ({
           />
         </div>
 
+      </div>
+
+      {/* Sections List */}
+      <div className="space-y-6">
+        {form.sections.map((section, sIdx) => (
+          <div
+            key={section.id}
+            id={`section-${section.id}`}
+            className="bg-white rounded-3xl border-2 border-slate-300 shadow-xs overflow-hidden transition-all"
+          >
+            {/* Section Header */}
+            <div className="p-4 sm:p-5 bg-slate-50 border-b-2 border-slate-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-md bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                    {sIdx + 1}
+                  </span>
+                  <input
+                    type="text"
+                    value={section.title}
+                    onChange={(e) => handleUpdateSection(section.id, { title: e.target.value })}
+                    placeholder="Título da Seção / Bloco"
+                    className="text-base font-bold text-slate-900 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-500 focus:bg-white px-1.5 py-0.5 rounded-sm outline-hidden flex-1"
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={section.description || ""}
+                  onChange={(e) => handleUpdateSection(section.id, { description: e.target.value })}
+                  placeholder="Descrição ou orientações para esta seção..."
+                  className="w-full text-xs text-slate-500 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-500 focus:bg-white px-1.5 py-0.5 rounded-sm outline-hidden"
+                />
+              </div>
+
+              {/* Section Actions */}
+              <div className="flex items-center gap-1 shrink-0 self-end sm:self-center">
+                <button
+                  type="button"
+                  disabled={sIdx === 0}
+                  onClick={() => handleMoveSection(sIdx, "up")}
+                  className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 rounded-lg hover:bg-slate-200/60"
+                  title="Mover seção para cima"
+                >
+                  <ChevronUp className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  disabled={sIdx === form.sections.length - 1}
+                  onClick={() => handleMoveSection(sIdx, "down")}
+                  className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 rounded-lg hover:bg-slate-200/60"
+                  title="Mover seção para baixo"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteSection(section.id)}
+                  className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50"
+                  title="Excluir seção"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Section Fields */}
+            <div className="p-4 sm:p-5 space-y-3">
+              {section.fields.length === 0 ? (
+                <div className="p-6 text-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                  <p className="text-xs text-slate-500 mb-3">Esta seção ainda não tem nenhum campo.</p>
+                  <button
+                    type="button"
+                    onClick={() => onOpenFieldEditor(null, section.id)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-xs font-semibold transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Adicionar Primeiro Campo
+                  </button>
+                </div>
+              ) : (
+                section.fields.map((field, fIdx) => {
+                  const Icon = TYPE_ICONS[field.type] || Type;
+                  const conditionSummary = getFieldConditionSummary(field, fieldsMap);
+                  const isConditional = field.conditionalLogic?.enabled;
+
+                  return (
+                    <div
+                      key={field.id}
+                      className={`p-3.5 border rounded-xl transition-all group ${
+                        isConditional
+                          ? "bg-purple-50/40 hover:bg-purple-50/70 border-purple-200"
+                          : "bg-slate-50/70 hover:bg-slate-50 border-slate-200"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                          <span className="text-xs font-bold text-slate-400 w-5 pt-0.5">
+                            {fIdx + 1}.
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[11px] font-medium text-slate-700 shadow-2xs">
+                                <Icon className="w-3 h-3 text-indigo-600" />
+                                <span>{TYPE_LABELS[field.type] || field.type}</span>
+                              </span>
+                              {field.required && (
+                                <span className="text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">
+                                  Obrigatória
+                                </span>
+                              )}
+                              {conditionSummary && (
+                                <button
+                                  type="button"
+                                  onClick={() => onOpenFieldEditor(field, section.id)}
+                                  className="inline-flex items-center gap-1 text-[10px] font-bold text-purple-700 bg-purple-100/90 hover:bg-purple-200 px-2 py-0.5 rounded-md border border-purple-300 transition-colors shadow-2xs"
+                                  title="Clique para editar as regras de exibição condicional deste campo"
+                                >
+                                  <GitBranch className="w-3 h-3 text-purple-600 shrink-0" />
+                                  <span className="truncate max-w-[260px]">{conditionSummary}</span>
+                                </button>
+                              )}
+                            </div>
+
+                            <p className="text-sm font-bold text-slate-900 leading-snug">
+                              {field.label}
+                            </p>
+
+                            {field.helpText && (
+                              <p className="text-xs text-slate-500 italic mt-1 flex items-start gap-1">
+                                <HelpCircle className="w-3 h-3 shrink-0 mt-0.5 text-slate-400" />
+                                <span>{field.helpText}</span>
+                              </p>
+                            )}
+
+                            {field.options && field.options.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5 mt-2">
+                                {field.options.map((opt, oIdx) => (
+                                  <span
+                                    key={oIdx}
+                                    className="text-[11px] bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded-md"
+                                  >
+                                    {opt}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Field Actions */}
+                        <div className="flex items-center gap-1 shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
+                          <button
+                            type="button"
+                            onClick={() => onOpenFieldEditor(field, section.id)}
+                            className={`p-1.5 rounded-lg transition-colors ${
+                              isConditional
+                                ? "text-purple-700 bg-purple-100 hover:bg-purple-200"
+                                : "text-slate-400 hover:text-purple-600 hover:bg-white"
+                            }`}
+                            title={isConditional ? "Editar lógica condicional (ativa)" : "Configurar lógica condicional"}
+                          >
+                            <GitBranch className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => onOpenFieldEditor(field, section.id)}
+                            className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-lg transition-colors"
+                            title="Editar campo personalizado"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDuplicateField(section.id, field)}
+                            className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-lg transition-colors"
+                            title="Duplicar campo"
+                          >
+                            <Copy className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={fIdx === 0}
+                            onClick={() => handleMoveField(section.id, fIdx, "up")}
+                            className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-25 hover:bg-white rounded-lg"
+                            title="Mover para cima"
+                          >
+                            <ChevronUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={fIdx === section.fields.length - 1}
+                            onClick={() => handleMoveField(section.id, fIdx, "down")}
+                            className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-25 hover:bg-white rounded-lg"
+                            title="Mover para baixo"
+                          >
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteField(section.id, field.id)}
+                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                            title="Excluir campo"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+
+              {/* Add Custom Field Toolbar */}
+              <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => onOpenFieldEditor(null, section.id)}
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-2xs transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Novo Campo Personalizado</span>
+                </button>
+
+                {/* Quick One-Click Types */}
+                <div className="flex items-center gap-1 overflow-x-auto py-1">
+                  <span className="text-[11px] text-slate-400 font-medium hidden sm:inline mr-1">
+                    Adicionar rápido:
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickAddField(section.id, "text")}
+                    className="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium shrink-0"
+                  >
+                    + Texto
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickAddField(section.id, "textarea")}
+                    className="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium shrink-0"
+                  >
+                    + Parágrafo
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickAddField(section.id, "radio")}
+                    className="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium shrink-0"
+                  >
+                    + Múltipla Escolha
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickAddField(section.id, "checkbox")}
+                    className="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium shrink-0"
+                  >
+                    + Caixas de Seleção
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickAddField(section.id, "consent")}
+                    className="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium shrink-0"
+                  >
+                    + Termo
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* Add Section Button */}
+        <button
+          type="button"
+          onClick={handleAddSection}
+          className="w-full py-4 border-2 border-dashed border-slate-300 hover:border-indigo-400 hover:bg-indigo-50/20 text-slate-600 hover:text-indigo-700 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold transition-all"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Adicionar Novo Bloco / Seção ao Formulário</span>
+        </button>
+      </div>
+
+      {/* Mais opções: e-mail automático, redirecionamento, links e visual (fechado por padrão) */}
+      <details className="group bg-white rounded-3xl border-2 border-slate-300 shadow-xs">
+        <summary className="cursor-pointer list-none p-5 flex items-center justify-between gap-3 select-none">
+          <div>
+            <span className="block text-sm font-bold text-slate-900">Mais opções do formulário</span>
+            <span className="block text-xs text-slate-500">E-mail automático, redirecionamento no final, links rastreados e visual</span>
+          </div>
+          <span className="text-xs font-bold text-indigo-700 group-open:hidden">Abrir</span>
+          <span className="text-xs font-bold text-indigo-700 hidden group-open:inline">Fechar</span>
+        </summary>
+        <div className="p-4 sm:p-5 pt-0 space-y-6">
+      <div className="bg-white rounded-3xl p-6 border-2 border-slate-300 shadow-xs space-y-3">
         {/* Resposta Automática por E-mail */}
         <div className="pt-2 border-t-2 border-slate-200 space-y-3">
           <div className="flex items-center justify-between">
@@ -1058,282 +1349,8 @@ export const FormEditor: React.FC<FormEditorProps> = ({
         </div>
       </div>
 
-      {/* Sections List */}
-      <div className="space-y-6">
-        {form.sections.map((section, sIdx) => (
-          <div
-            key={section.id}
-            id={`section-${section.id}`}
-            className="bg-white rounded-3xl border-2 border-slate-300 shadow-xs overflow-hidden transition-all"
-          >
-            {/* Section Header */}
-            <div className="p-4 sm:p-5 bg-slate-50 border-b-2 border-slate-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-md bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                    {sIdx + 1}
-                  </span>
-                  <input
-                    type="text"
-                    value={section.title}
-                    onChange={(e) => handleUpdateSection(section.id, { title: e.target.value })}
-                    placeholder="Título da Seção / Bloco"
-                    className="text-base font-bold text-slate-900 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-500 focus:bg-white px-1.5 py-0.5 rounded-sm outline-hidden flex-1"
-                  />
-                </div>
-                <input
-                  type="text"
-                  value={section.description || ""}
-                  onChange={(e) => handleUpdateSection(section.id, { description: e.target.value })}
-                  placeholder="Descrição ou orientações para esta seção..."
-                  className="w-full text-xs text-slate-500 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-500 focus:bg-white px-1.5 py-0.5 rounded-sm outline-hidden"
-                />
-              </div>
-
-              {/* Section Actions */}
-              <div className="flex items-center gap-1 shrink-0 self-end sm:self-center">
-                <button
-                  type="button"
-                  disabled={sIdx === 0}
-                  onClick={() => handleMoveSection(sIdx, "up")}
-                  className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 rounded-lg hover:bg-slate-200/60"
-                  title="Mover seção para cima"
-                >
-                  <ChevronUp className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  disabled={sIdx === form.sections.length - 1}
-                  onClick={() => handleMoveSection(sIdx, "down")}
-                  className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 rounded-lg hover:bg-slate-200/60"
-                  title="Mover seção para baixo"
-                >
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDeleteSection(section.id)}
-                  className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50"
-                  title="Excluir seção"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Section Fields */}
-            <div className="p-4 sm:p-5 space-y-3">
-              {section.fields.length === 0 ? (
-                <div className="p-6 text-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-                  <p className="text-xs text-slate-500 mb-3">Esta seção ainda não tem nenhum campo.</p>
-                  <button
-                    type="button"
-                    onClick={() => onOpenFieldEditor(null, section.id)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-xs font-semibold transition-colors"
-                  >
-                    <Plus className="w-3.5 h-3.5" /> Adicionar Primeiro Campo
-                  </button>
-                </div>
-              ) : (
-                section.fields.map((field, fIdx) => {
-                  const Icon = TYPE_ICONS[field.type] || Type;
-                  const conditionSummary = getFieldConditionSummary(field, fieldsMap);
-                  const isConditional = field.conditionalLogic?.enabled;
-
-                  return (
-                    <div
-                      key={field.id}
-                      className={`p-3.5 border rounded-xl transition-all group ${
-                        isConditional
-                          ? "bg-purple-50/40 hover:bg-purple-50/70 border-purple-200"
-                          : "bg-slate-50/70 hover:bg-slate-50 border-slate-200"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-2.5 min-w-0 flex-1">
-                          <span className="text-xs font-bold text-slate-400 w-5 pt-0.5">
-                            {fIdx + 1}.
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2 flex-wrap mb-1">
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[11px] font-medium text-slate-700 shadow-2xs">
-                                <Icon className="w-3 h-3 text-indigo-600" />
-                                <span>{TYPE_LABELS[field.type] || field.type}</span>
-                              </span>
-                              {field.required && (
-                                <span className="text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">
-                                  Obrigatória
-                                </span>
-                              )}
-                              {conditionSummary && (
-                                <button
-                                  type="button"
-                                  onClick={() => onOpenFieldEditor(field, section.id)}
-                                  className="inline-flex items-center gap-1 text-[10px] font-bold text-purple-700 bg-purple-100/90 hover:bg-purple-200 px-2 py-0.5 rounded-md border border-purple-300 transition-colors shadow-2xs"
-                                  title="Clique para editar as regras de exibição condicional deste campo"
-                                >
-                                  <GitBranch className="w-3 h-3 text-purple-600 shrink-0" />
-                                  <span className="truncate max-w-[260px]">{conditionSummary}</span>
-                                </button>
-                              )}
-                            </div>
-
-                            <p className="text-sm font-bold text-slate-900 leading-snug">
-                              {field.label}
-                            </p>
-
-                            {field.helpText && (
-                              <p className="text-xs text-slate-500 italic mt-1 flex items-start gap-1">
-                                <HelpCircle className="w-3 h-3 shrink-0 mt-0.5 text-slate-400" />
-                                <span>{field.helpText}</span>
-                              </p>
-                            )}
-
-                            {field.options && field.options.length > 0 && (
-                              <div className="flex flex-wrap gap-1.5 mt-2">
-                                {field.options.map((opt, oIdx) => (
-                                  <span
-                                    key={oIdx}
-                                    className="text-[11px] bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded-md"
-                                  >
-                                    {opt}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Field Actions */}
-                        <div className="flex items-center gap-1 shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
-                          <button
-                            type="button"
-                            onClick={() => onOpenFieldEditor(field, section.id)}
-                            className={`p-1.5 rounded-lg transition-colors ${
-                              isConditional
-                                ? "text-purple-700 bg-purple-100 hover:bg-purple-200"
-                                : "text-slate-400 hover:text-purple-600 hover:bg-white"
-                            }`}
-                            title={isConditional ? "Editar lógica condicional (ativa)" : "Configurar lógica condicional"}
-                          >
-                            <GitBranch className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => onOpenFieldEditor(field, section.id)}
-                            className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-lg transition-colors"
-                            title="Editar campo personalizado"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDuplicateField(section.id, field)}
-                            className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-lg transition-colors"
-                            title="Duplicar campo"
-                          >
-                            <Copy className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            disabled={fIdx === 0}
-                            onClick={() => handleMoveField(section.id, fIdx, "up")}
-                            className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-25 hover:bg-white rounded-lg"
-                            title="Mover para cima"
-                          >
-                            <ChevronUp className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            disabled={fIdx === section.fields.length - 1}
-                            onClick={() => handleMoveField(section.id, fIdx, "down")}
-                            className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-25 hover:bg-white rounded-lg"
-                            title="Mover para baixo"
-                          >
-                            <ChevronDown className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteField(section.id, field.id)}
-                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-                            title="Excluir campo"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-
-              {/* Add Custom Field Toolbar */}
-              <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => onOpenFieldEditor(null, section.id)}
-                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-2xs transition-colors"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Novo Campo Personalizado</span>
-                </button>
-
-                {/* Quick One-Click Types */}
-                <div className="flex items-center gap-1 overflow-x-auto py-1">
-                  <span className="text-[11px] text-slate-400 font-medium hidden sm:inline mr-1">
-                    Adicionar rápido:
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickAddField(section.id, "text")}
-                    className="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium shrink-0"
-                  >
-                    + Texto
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickAddField(section.id, "textarea")}
-                    className="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium shrink-0"
-                  >
-                    + Parágrafo
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickAddField(section.id, "radio")}
-                    className="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium shrink-0"
-                  >
-                    + Múltipla Escolha
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickAddField(section.id, "checkbox")}
-                    className="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium shrink-0"
-                  >
-                    + Caixas de Seleção
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickAddField(section.id, "consent")}
-                    className="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium shrink-0"
-                  >
-                    + Termo
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {/* Add Section Button */}
-        <button
-          type="button"
-          onClick={handleAddSection}
-          className="w-full py-4 border-2 border-dashed border-slate-300 hover:border-indigo-400 hover:bg-indigo-50/20 text-slate-600 hover:text-indigo-700 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold transition-all"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Adicionar Novo Bloco / Seção ao Formulário</span>
-        </button>
-      </div>
+        </div>
+      </details>
 
       {/* Modal de Links Tagueados e Planilha do Google */}
       <TaggedLinksModal

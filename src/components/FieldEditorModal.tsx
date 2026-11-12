@@ -263,23 +263,52 @@ export const FieldEditorModal: React.FC<FieldEditorModalProps> = ({
             </div>
             <div>
               <h3 className="text-base font-bold text-slate-900">
-                {initialField ? "Editar Campo Personalizado" : "Novo Campo Personalizado"}
+                {initialField ? "Editar pergunta" : "Nova pergunta"}
               </h3>
               <p className="text-xs text-slate-500">
-                Defina a pergunta, tipo de entrada e configurações de validação
+                Enter também salva
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          {/* Ações no topo: salvar fica perto do que você está digitando */}
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="field-editor-form"
+              disabled={!label.trim()}
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl shadow-xs transition-colors"
+            >
+              <CheckCircle2 className="w-4 h-4" />
+              <span>{initialField ? "Salvar" : "Adicionar"}</span>
+            </button>
+          </div>
         </div>
 
         {/* Modal Body Form */}
-        <form onSubmit={handleSave} className="p-6 overflow-y-auto flex-1 space-y-5">
+        <form id="field-editor-form" onSubmit={handleSave} className="p-6 overflow-y-auto flex-1 space-y-5">
+          {/* Question / Label */}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              Pergunta / Título do Campo *
+            </label>
+            <input
+              type="text"
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              placeholder="Ex: Em que estágio a empresa está hoje?"
+              autoFocus
+              className="w-full p-3 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 text-slate-900 font-medium"
+              required
+            />
+          </div>
+
           {/* Target Section */}
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
@@ -296,21 +325,6 @@ export const FieldEditorModal: React.FC<FieldEditorModalProps> = ({
                 </option>
               ))}
             </select>
-          </div>
-
-          {/* Question / Label */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Pergunta / Título do Campo *
-            </label>
-            <input
-              type="text"
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              placeholder="Ex: Em que estágio a empresa está hoje?"
-              className="w-full p-3 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 text-slate-900 font-medium"
-              required
-            />
           </div>
 
           {/* Field Type Selection Grid */}
@@ -845,24 +859,6 @@ export const FieldEditorModal: React.FC<FieldEditorModalProps> = ({
             </div>
           )}
 
-          {/* Actions */}
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={!label.trim()}
-              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition-colors"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>{initialField ? "Salvar Alterações" : "Criar Campo Personalizado"}</span>
-            </button>
-          </div>
         </form>
       </div>
     </div>

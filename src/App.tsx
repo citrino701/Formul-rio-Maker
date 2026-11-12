@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Navbar } from "./components/Navbar";
 import { FormEditor } from "./components/FormEditor";
 import { FormPreview } from "./components/FormPreview";
 import { AiGeneratorModal } from "./components/AiGeneratorModal";
@@ -32,7 +31,11 @@ import {
   Clock,
   Loader2,
   AlertCircle,
-  Mail
+  Mail,
+  ArrowLeft,
+  Copy,
+  Settings,
+  FileText
 } from "lucide-react";
 
 const STORAGE_KEY = "formcraft_current_form";
@@ -50,6 +53,10 @@ export default function App() {
   });
 
   const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
+  // Tela atual: lista de formulários ("home") ou edição de um formulário ("editor")
+  const [view, setView] = useState<"home" | "editor">("home");
+  const [formsLoaded, setFormsLoaded] = useState(false);
+  const [copiedFormId, setCopiedFormId] = useState<string | null>(null);
   const [form, setForm] = useState<FormStructure>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -141,6 +148,7 @@ export default function App() {
       }
       if (data && data.success && Array.isArray(data.forms)) {
         setAllForms(data.forms);
+        setFormsLoaded(true);
         const current = data.forms.find((f: any) => f.id === form.id);
         if (current) {
           const newCount = current.responseCount || 0;
@@ -151,7 +159,7 @@ export default function App() {
           ) {
             const diff = newCount - prevResponseCountRef.current;
             showToast(
-              `📩 ${diff === 1 ? "Nova resposta recebida" : `${diff} novas respostas recebidas`}! E-mails de confirmação disparados para o respondente e hugoviajante@gmail.com.`
+              `📩 ${diff === 1 ? "Nova resposta recebida" : `${diff} novas respostas recebidas`}!`
             );
           }
           prevResponseCountRef.current = newCount;
@@ -316,10 +324,12 @@ export default function App() {
     saveFormToServer(finalized);
     setCreatedFormForModal(finalized);
     setIsFormCreatedModalOpen(true);
+    setActiveTab("edit");
+    setView("editor");
     refreshFormsList();
   };
 
-  const handleSelectFormById = async (formId: string) => {
+  const handleSelectFormById = async (formId: string): Promise<FormStructure | null> => {
     try {
       const res = await fetch(`/api/forms/${encodeURIComponent(formId)}`);
       if (res.ok) {
@@ -333,12 +343,42 @@ export default function App() {
           } catch (e) {
             console.warn(e);
           }
-          showToast(`Formulário "${data.form.title}" selecionado!`);
+          return data.form as FormStructure;
         }
       }
     } catch (err) {
       console.error(err);
     }
+    return null;
+  };
+
+  // Abre um formulário da lista no editor
+  const openFormInEditor = async (formId: string) => {
+    if (formId !== form.id) {
+      const loaded = await handleSelectFormById(formId);
+      if (!loaded) {
+        showToast("Não foi possível abrir esse formulário.");
+        return;
+      }
+    }
+    setActiveTab("edit");
+    setView("editor");
+  };
+
+  const openResponsesFor = async (formId?: string) => {
+    if (formId && formId !== form.id) await handleSelectFormById(formId);
+    setIsResponsesModalOpen(true);
+  };
+
+  const copyRespondLink = async (formId: string) => {
+    const url = `${window.location.origin}/?respond=${encodeURIComponent(formId)}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      window.prompt("Copie o link:", url);
+    }
+    setCopiedFormId(formId);
+    setTimeout(() => setCopiedFormId(null), 2000);
   };
 
   const handleNewForm = () => {
@@ -367,8 +407,8 @@ export default function App() {
     setForm(blankForm);
     setAnswers({});
     saveFormToServer(blankForm);
-    setCreatedFormForModal(blankForm);
-    setIsFormCreatedModalOpen(true);
+    setActiveTab("edit");
+    setView("editor");
     refreshFormsList();
   };
 
@@ -394,10 +434,9 @@ export default function App() {
         const remainingForms = allForms.filter((f) => f.id !== targetId);
 
         if (targetId === form.id) {
+          setView("home");
           if (remainingForms.length > 0) {
             await handleSelectFormById(remainingForms[0].id);
-          } else {
-            handleNewForm();
           }
         }
         await refreshFormsList();
@@ -423,6 +462,8 @@ export default function App() {
     setForm(newForm);
     setAnswers({});
     saveFormToServer(newForm);
+    setActiveTab("edit");
+    setView("editor");
     showToast(`Modelo "${template.title}" carregado!`);
   };
 
@@ -447,237 +488,253 @@ export default function App() {
     );
   }
 
-  return (
-    <div
-      className={`min-h-screen ${
-        activeTab === "edit"
-          ? "bg-gradient-to-b from-[#FAFBFD] via-[#F3F7FC] to-[#E5EFF9]"
-          : "bg-gradient-to-b from-[#FDFDFD] via-[#EFF5FA] to-[#DFECF7]"
-      } text-slate-900 flex flex-col selection:bg-indigo-100 selection:text-indigo-900 font-sans transition-colors duration-300`}
-    >
-      {/* Top Navbar */}
-      <Navbar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onOpenAiGenerator={() => setIsAiModalOpen(true)}
-        onOpenPdfExport={() => setIsPdfModalOpen(true)}
-        onOpenTemplates={() => setIsTemplateModalOpen(true)}
-        onOpenShareModal={() => setIsShareModalOpen(true)}
-        onOpenResponsesModal={() => setIsResponsesModalOpen(true)}
-        onOpenTaggedLinks={() => setIsTaggedModalOpen(true)}
-        onNewForm={handleNewForm}
-        onPrintNative={handlePrintNative}
-        formTitle={form.title}
-        currentFormLogo={form.logoUrl}
-        responseCount={responseCount}
-        allForms={allForms}
-        currentFormId={form.id}
-        onSelectForm={handleSelectFormById}
-        onDeleteForm={handleOpenDeleteModal}
-        onOpenEmailSettings={() => setIsEmailModalOpen(true)}
-      />
+  const totalQuestions = form.sections.reduce((acc, s) => acc + s.fields.length, 0);
+  const totalResponses = allForms.reduce((acc, f) => acc + (f.responseCount || 0), 0);
+  const formatWhen = (iso?: string) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    const days = Math.floor((Date.now() - d.getTime()) / 86400000);
+    if (days <= 0) return `hoje, ${d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+    if (days === 1) return "ontem";
+    return d.toLocaleDateString("pt-BR");
+  };
 
-      {/* Informative notification if current form has 0 responses but another form has saved responses */}
-      {(() => {
-        const otherFormsWithResponses = allForms.filter(
-          (f) => f.id !== form.id && (f.responseCount || 0) > 0
-        );
-        if (responseCount === 0 && otherFormsWithResponses.length > 0) {
-          return (
-            <div className="bg-amber-50/95 border-b border-amber-200 px-4 sm:px-6 py-2.5 text-xs text-amber-900 flex flex-wrap items-center justify-between gap-3 shadow-2xs print:hidden">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                <span>
-                  Você está visualizando o formulário <strong>"{form.title}"</strong> (0 respostas). Há respostas registradas em outros formulários:
-                  {otherFormsWithResponses.map((f) => (
+  return (
+    <div className="min-h-screen bg-[#F6F6F3] text-[#16181D] flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900">
+      {/* Cabeçalho do app */}
+      <header className="bg-white border-b border-[#E4E4DE] print:hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
+          <button
+            type="button"
+            onClick={() => setView("home")}
+            className="flex items-center gap-2.5 cursor-pointer"
+          >
+            <span className="w-8 h-8 rounded-lg bg-[#16181D] text-white flex items-center justify-center font-bold text-sm">F</span>
+            <span className="font-semibold text-[15px]">Formulário Maker</span>
+          </button>
+          <nav className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setView("home")}
+              className={`px-3.5 py-2 rounded-lg text-sm cursor-pointer ${view === "home" ? "bg-[#EEF0FB] text-[#2F4AC0] font-semibold" : "text-[#4A4E57] hover:bg-slate-100 font-medium"}`}
+            >
+              Formulários
+            </button>
+            <button
+              type="button"
+              onClick={() => openResponsesFor()}
+              className="px-3.5 py-2 rounded-lg text-sm text-[#4A4E57] hover:bg-slate-100 font-medium cursor-pointer"
+            >
+              Respostas
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsEmailModalOpen(true)}
+              aria-label="Configurações de e-mail"
+              title="Configurações de e-mail"
+              className="w-10 h-10 rounded-lg text-[#4A4E57] hover:bg-slate-100 flex items-center justify-center cursor-pointer"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+          </nav>
+        </div>
+      </header>
+
+      {view === "home" ? (
+        /* ------------------------------------------------------------ LISTA */
+        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-8 py-8 sm:py-10 space-y-7">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="space-y-1">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Meus formulários</h1>
+              <p className="text-[15px] text-[#5B606B]">
+                {allForms.length} {allForms.length === 1 ? "formulário" : "formulários"} · {totalResponses} {totalResponses === 1 ? "resposta" : "respostas"} no total
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsTemplateModalOpen(true)}
+                className="h-11 px-4 rounded-xl border border-[#D6D6CF] bg-white text-sm font-medium hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
+              >
+                <FolderOpen className="w-4 h-4" />
+                Modelos
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsAiModalOpen(true)}
+                className="h-11 px-4 rounded-xl border border-[#2F4AC0] bg-[#EEF0FB] text-[#2F4AC0] text-sm font-semibold hover:bg-[#E2E6FA] flex items-center gap-2 cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" />
+                Criar com IA
+              </button>
+              <button
+                type="button"
+                onClick={handleNewForm}
+                className="h-11 px-5 rounded-xl bg-[#2F4AC0] hover:bg-[#2840A8] text-white text-sm font-semibold flex items-center gap-2 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                Novo formulário
+              </button>
+            </div>
+          </div>
+
+          {!formsLoaded ? (
+            <div className="bg-white border border-[#E4E4DE] rounded-2xl p-10 flex items-center justify-center gap-3 text-[#5B606B]">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Carregando seus formulários...
+            </div>
+          ) : allForms.length === 0 ? (
+            <div className="bg-white border border-[#E4E4DE] rounded-2xl p-10 text-center space-y-3">
+              <p className="text-lg font-semibold">Nenhum formulário ainda</p>
+              <p className="text-[#5B606B] text-sm">Comece um do zero, de um modelo ou peça para a IA montar.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {allForms.map((f) => (
+                <article key={f.id} className="bg-white border border-[#E4E4DE] rounded-2xl p-5 flex flex-col gap-4">
+                  <div className="flex items-center justify-between gap-2">
+                    {(f.responseCount || 0) > 0 ? (
+                      <span className="text-xs font-semibold text-[#1E7A46] bg-[#E6F4EC] px-2.5 py-1 rounded-full">Recebendo respostas</span>
+                    ) : (
+                      <span className="text-xs font-semibold text-[#8A5300] bg-[#FBF0DD] px-2.5 py-1 rounded-full">Sem respostas</span>
+                    )}
+                    <span className="text-xs text-[#5B606B]">editado {formatWhen(f.updatedAt)}</span>
+                  </div>
+                  <button type="button" onClick={() => openFormInEditor(f.id)} className="text-left space-y-1 cursor-pointer">
+                    <h2 className="text-lg font-semibold leading-snug hover:text-[#2F4AC0]">{f.title}</h2>
+                    <p className="text-sm text-[#5B606B]">{f.totalQuestions} perguntas · {f.sectionsCount} {f.sectionsCount === 1 ? "bloco" : "blocos"}</p>
+                  </button>
+                  <button type="button" onClick={() => openResponsesFor(f.id)} className="flex items-baseline gap-2 text-left cursor-pointer">
+                    <span className="text-3xl font-bold tracking-tight">{f.responseCount || 0}</span>
+                    <span className="text-sm text-[#5B606B] hover:text-[#2F4AC0]">
+                      {(f.responseCount || 0) === 1 ? "resposta" : "respostas"}
+                      {f.lastResponseAt ? ` · última ${formatWhen(f.lastResponseAt)}` : ""}
+                    </span>
+                  </button>
+                  <div className="flex gap-2 mt-auto">
                     <button
-                      key={f.id}
                       type="button"
-                      onClick={() => handleSelectFormById(f.id)}
-                      className="ml-1.5 font-bold underline text-amber-900 hover:text-amber-950 cursor-pointer"
+                      onClick={() => copyRespondLink(f.id)}
+                      className="flex-1 h-11 rounded-xl border border-[#2F4AC0] bg-[#EEF0FB] text-[#2F4AC0] text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      "{f.title}" ({f.responseCount} {f.responseCount === 1 ? "resposta" : "respostas"})
+                      {copiedFormId === f.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                      {copiedFormId === f.id ? "Copiado!" : "Copiar link"}
                     </button>
-                  ))}
+                    <button
+                      type="button"
+                      onClick={() => openFormInEditor(f.id)}
+                      className="flex-1 h-11 rounded-xl border border-[#D6D6CF] text-sm font-medium hover:bg-slate-50 flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      Editar
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </main>
+      ) : (
+        /* ------------------------------------------------------------ EDITOR */
+        <>
+          {/* Barra fixa: tudo que importa fica sempre à vista */}
+          <div className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-[#E4E4DE] print:hidden">
+            <div className="max-w-6xl mx-auto px-4 sm:px-8 py-3 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setView("home")}
+                className="flex items-center gap-1.5 text-sm font-medium text-[#4A4E57] hover:text-[#16181D] cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Formulários
+              </button>
+              <div className="min-w-0 flex-1 flex items-center gap-3">
+                <span className="font-semibold truncate">{form.title}</span>
+                <span className="hidden md:inline text-xs text-[#5B606B] shrink-0">{totalQuestions} perguntas</span>
+                <span className="text-xs font-medium shrink-0">
+                  {autoSaveStatus === "saving" && (
+                    <span className="flex items-center gap-1 text-[#2F4AC0]"><Loader2 className="w-3.5 h-3.5 animate-spin" />Salvando...</span>
+                  )}
+                  {autoSaveStatus === "saved" && (
+                    <span className="flex items-center gap-1 text-[#1E7A46]"><Check className="w-3.5 h-3.5" />Salvo{lastSavedAt ? ` às ${lastSavedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : ""}</span>
+                  )}
+                  {autoSaveStatus === "pending" && (
+                    <span className="flex items-center gap-1.5 text-[#8A5300]"><span className="w-2 h-2 rounded-full bg-amber-500" />Salvando em instantes</span>
+                  )}
                 </span>
               </div>
+
+              <div className="flex items-center rounded-xl bg-[#F0F0EC] p-1">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("edit")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm cursor-pointer ${activeTab === "edit" ? "bg-white shadow-xs font-semibold" : "text-[#4A4E57] font-medium"}`}
+                >
+                  <Edit3 className="w-4 h-4" />
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("preview")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm cursor-pointer ${activeTab === "preview" ? "bg-white shadow-xs font-semibold" : "text-[#4A4E57] font-medium"}`}
+                >
+                  <Eye className="w-4 h-4" />
+                  Visualizar
+                </button>
+              </div>
+
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setIsResponsesModalOpen(true)}
-                  className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-xs transition-colors shrink-0 cursor-pointer"
+                  className="h-10 px-3 rounded-xl border border-[#D6D6CF] bg-white text-sm font-medium hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
                 >
-                  Ver Todas as Respostas
+                  <BarChart3 className="w-4 h-4" />
+                  Respostas
+                  <span className="bg-[#2F4AC0] text-white text-xs font-bold px-2 py-0.5 rounded-full">{responseCount}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsPdfModalOpen(true)}
+                  aria-label="Exportar PDF"
+                  title="Exportar PDF"
+                  className="w-10 h-10 rounded-xl border border-[#D6D6CF] bg-white hover:bg-slate-50 flex items-center justify-center cursor-pointer"
+                >
+                  <FileText className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="h-10 px-4 rounded-xl bg-[#2F4AC0] hover:bg-[#2840A8] text-white text-sm font-semibold flex items-center gap-2 cursor-pointer"
+                >
+                  <Link2 className="w-4 h-4" />
+                  Enviar link
                 </button>
               </div>
             </div>
-          );
-        }
-        return null;
-      })()}
+          </div>
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 md:p-8 space-y-6">
-        {/* Clean Minimalist Form Header Bar with Clear Separation */}
-        <div className="bg-white/95 backdrop-blur-xs rounded-3xl p-4 sm:p-5 border-2 border-slate-300 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
-          <div className="flex items-center gap-3.5 min-w-0">
-            {form.logoUrl && (
-              <div className="w-14 h-12 rounded-2xl bg-slate-50 border border-slate-200 p-1 flex items-center justify-center shrink-0 shadow-2xs">
-                <img
-                  src={form.logoUrl}
-                  alt="Logo"
-                  referrerPolicy="no-referrer"
-                  className="max-h-full max-w-full object-contain"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLElement).style.display = "none";
-                  }}
-                />
-              </div>
+          <main className="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-8 py-6 space-y-6">
+            {activeTab === "edit" ? (
+              <FormEditor
+                form={form}
+                onChange={handleFormChange}
+                onOpenFieldEditor={handleOpenFieldEditor}
+                onOpenAiGenerator={() => setIsAiModalOpen(true)}
+                onDeleteForm={() => handleOpenDeleteModal(form.id, form.title)}
+              />
+            ) : (
+              <FormPreview
+                form={form}
+                answers={answers}
+                onAnswersChange={setAnswers}
+                onOpenPdfExport={() => setIsPdfModalOpen(true)}
+                onResponseSubmitted={refreshFormsList}
+              />
             )}
-            <div className="space-y-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200">
-                  Formulário Ativo
-                </span>
-                <span className="text-xs text-slate-500 font-medium">
-                  {form.sections.length} seções • {form.sections.reduce((acc, s) => acc + s.fields.length, 0)} perguntas
-                </span>
-              </div>
-              <h2 className="text-base sm:text-xl font-extrabold text-slate-900 truncate">
-                {form.title}
-              </h2>
-            </div>
-          </div>
-
-          {/* Core Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
-            {/* Button 1: Gerar link para responder */}
-            <button
-              type="button"
-              onClick={() => setIsShareModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs sm:text-sm font-bold shadow-xs transition-all hover:scale-101 border border-emerald-700"
-            >
-              <Link2 className="w-4 h-4" />
-              <span>Gerar link para responder</span>
-            </button>
-
-            {/* Button 2: Ver respostas do formulário */}
-            <button
-              type="button"
-              onClick={() => setIsResponsesModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border-2 border-indigo-200 rounded-2xl text-xs sm:text-sm font-bold transition-all"
-            >
-              <BarChart3 className="w-4 h-4 text-indigo-600" />
-              <span>Ver respostas</span>
-              <span className="bg-indigo-600 text-white text-[11px] font-extrabold px-2 py-0.5 rounded-full">
-                {responseCount}
-              </span>
-            </button>
-
-            {/* Button 3: Exportar PDF */}
-            <button
-              type="button"
-              onClick={() => setIsPdfModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2.5 bg-white hover:bg-slate-50 border-2 border-slate-300 text-slate-700 rounded-2xl text-xs sm:text-sm font-bold transition-all shadow-2xs"
-            >
-              <Download className="w-4 h-4 text-rose-600" />
-              <span className="hidden sm:inline">Exportar PDF</span>
-            </button>
-
-            {/* Button 4: Excluir formulário */}
-            <button
-              type="button"
-              onClick={() => handleOpenDeleteModal(form.id, form.title)}
-              className="flex items-center gap-1.5 px-3 py-2.5 bg-white hover:bg-rose-50 border-2 border-rose-200 hover:border-rose-300 text-rose-600 hover:text-rose-700 rounded-2xl text-xs sm:text-sm font-bold transition-all shadow-2xs"
-              title="Excluir este formulário permanentemente"
-            >
-              <Trash2 className="w-4 h-4 text-rose-600" />
-              <span className="hidden sm:inline">Excluir</span>
-            </button>
-          </div>
-        </div>
-
-        {/* View Switcher Tabs with Auto-save Status & Darker Separator Line */}
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-2 rounded-2xl border-2 border-slate-300 shadow-2xs print:hidden">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setActiveTab("edit")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-                activeTab === "edit"
-                  ? "bg-indigo-600 text-white shadow-xs border border-indigo-700"
-                  : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
-              }`}
-            >
-              <Edit3 className="w-4 h-4" />
-              <span>Editar Formulário</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("preview")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-                activeTab === "preview"
-                  ? "bg-indigo-600 text-white shadow-xs border border-indigo-700"
-                  : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
-              }`}
-            >
-              <Eye className="w-4 h-4" />
-              <span>Modo Respondente (Preenchimento)</span>
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2 ml-auto">
-            {/* Real-time Auto-save Indicator */}
-            <div className="flex items-center text-xs font-semibold">
-              {autoSaveStatus === "saving" && (
-                <span className="flex items-center gap-1.5 text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-200">
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-600" />
-                  <span>Salvando...</span>
-                </span>
-              )}
-              {autoSaveStatus === "saved" && (
-                <span className="flex items-center gap-1 text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
-                  <Check className="w-3.5 h-3.5 text-emerald-600 font-bold" />
-                  <span>
-                    Salvo {lastSavedAt ? `às ${lastSavedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : ""}
-                  </span>
-                </span>
-              )}
-              {autoSaveStatus === "pending" && (
-                <span className="flex items-center gap-1.5 text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
-                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                  <span>Alterações não salvas</span>
-                </span>
-              )}
-            </div>
-
-            <button
-              onClick={() => setIsTemplateModalOpen(true)}
-              className="text-xs text-slate-600 hover:text-indigo-700 flex items-center gap-1 font-bold px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors border border-slate-200"
-            >
-              <FolderOpen className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Modelos</span>
-            </button>
-          </div>
-        </div>
-
-        {/* View Component */}
-        {activeTab === "edit" ? (
-          <FormEditor
-            form={form}
-            onChange={handleFormChange}
-            onOpenFieldEditor={handleOpenFieldEditor}
-            onOpenAiGenerator={() => setIsAiModalOpen(true)}
-            onDeleteForm={() => handleOpenDeleteModal(form.id, form.title)}
-          />
-        ) : (
-          <FormPreview
-            form={form}
-            answers={answers}
-            onAnswersChange={setAnswers}
-            onOpenPdfExport={() => setIsPdfModalOpen(true)}
-            onResponseSubmitted={refreshFormsList}
-          />
-        )}
-      </main>
+          </main>
+        </>
+      )}
 
       {/* Toast Notification */}
       {toastMessage && (
@@ -694,7 +751,7 @@ export default function App() {
         form={createdFormForModal}
         onOpenShareModal={() => setIsShareModalOpen(true)}
         onOpenPreview={() => setActiveTab("preview")}
-        onContinueEditing={() => setActiveTab("edit")}
+        onContinueEditing={() => { setActiveTab("edit"); setView("editor"); }}
       />
 
       {/* Share Link Modal ("Gerar link para responder") */}

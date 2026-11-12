@@ -411,17 +411,26 @@ function defaultEmailConfig(): ServerEmailConfig {
 function mergeEmailConfig(saved: Partial<ServerEmailConfig> | null): ServerEmailConfig {
   const base = defaultEmailConfig();
   if (!saved) return base;
+  // O que está nas variáveis da Vercel SEMPRE vale. O painel só preenche o que não foi definido lá.
+  const env = (name: string) => (process.env[name] || "").trim();
+  const pick = (envNames: string[], savedValue: any, baseValue: any) =>
+    envNames.some((n) => env(n)) ? baseValue : savedValue || baseValue;
   return {
     ...base,
     ...saved,
-    gmailUser: saved.gmailUser || base.gmailUser,
-    gmailAppPassword: saved.gmailAppPassword || base.gmailAppPassword,
-    resendApiKey: saved.resendApiKey || base.resendApiKey,
-    brevoApiKey: saved.brevoApiKey || base.brevoApiKey,
-    smtpHost: saved.smtpHost || base.smtpHost,
-    smtpUser: saved.smtpUser || base.smtpUser,
-    smtpPass: saved.smtpPass || base.smtpPass,
-    webhookUrl: saved.webhookUrl || base.webhookUrl
+    gmailUser: pick(["GMAIL_USER"], saved.gmailUser, base.gmailUser),
+    gmailAppPassword: pick(["GMAIL_APP_PASSWORD", "GMAIL_PASS"], saved.gmailAppPassword, base.gmailAppPassword),
+    resendApiKey: pick(["RESEND_API_KEY"], saved.resendApiKey, base.resendApiKey),
+    resendFrom: pick(["RESEND_FROM"], saved.resendFrom, base.resendFrom),
+    brevoApiKey: pick(["BREVO_API_KEY"], saved.brevoApiKey, base.brevoApiKey),
+    brevoSender: pick(["BREVO_SENDER"], saved.brevoSender, base.brevoSender),
+    smtpHost: pick(["SMTP_HOST"], saved.smtpHost, base.smtpHost),
+    smtpUser: pick(["SMTP_USER"], saved.smtpUser, base.smtpUser),
+    smtpPass: pick(["SMTP_PASS"], saved.smtpPass, base.smtpPass),
+    smtpFrom: pick(["SMTP_FROM"], saved.smtpFrom, base.smtpFrom),
+    webhookUrl: pick(["EMAIL_WEBHOOK_URL"], saved.webhookUrl, base.webhookUrl),
+    adminEmail: pick(["ADMIN_EMAIL"], saved.adminEmail, base.adminEmail),
+    senderName: pick(["SENDER_NAME"], saved.senderName, base.senderName)
   } as ServerEmailConfig;
 }
 
