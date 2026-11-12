@@ -337,6 +337,8 @@ export default function App() {
     };
     setForm(finalized);
     setAnswers({});
+    setResponseCount(0);
+    prevResponseCountRef.current = 0;
     saveFormToServer(finalized);
     setCreatedFormForModal(finalized);
     setIsFormCreatedModalOpen(true);
@@ -354,6 +356,7 @@ export default function App() {
           setForm(data.form);
           setResponseCount(data.responseCount || 0);
           setAnswers({});
+          prevResponseCountRef.current = data.responseCount || 0;
           try {
             localStorage.setItem(LAST_FORM_ID_KEY, formId);
           } catch (e) {
@@ -442,6 +445,8 @@ export default function App() {
     };
     setForm(blankForm);
     setAnswers({});
+    setResponseCount(0);
+    prevResponseCountRef.current = 0;
     saveFormToServer(blankForm);
     setActiveTab("edit");
     setView("editor");
@@ -497,6 +502,8 @@ export default function App() {
     };
     setForm(newForm);
     setAnswers({});
+    setResponseCount(0);
+    prevResponseCountRef.current = 0;
     saveFormToServer(newForm);
     setActiveTab("edit");
     setView("editor");
